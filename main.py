@@ -1,6 +1,7 @@
 #Libraries used
 import pygame,sys
 import numpy as np
+from playsound import playsound
 
 #initializing
 pygame.init()
@@ -77,6 +78,12 @@ def draw_shapes():
                 pygame.draw.line(screen,cross_color,(row*square_size+space,col*square_size+square_size-space),(row*square_size+square_size-space,col*square_size+space),cross_width)
                 pygame.draw.line(screen,cross_color,(row*square_size+space,col*square_size + space),(row*square_size+square_size-space,col*square_size+square_size-space),cross_width)
 
+def wonn(player):
+    if player == 1:
+        playsound('src/sound/Player1.mp3')
+    elif player == 2:
+        playsound('src/sound/Player2.mp3')
+    return 0
 
 
 def win_check(player):
@@ -84,18 +91,22 @@ def win_check(player):
     for col in range(Board_cols):
         if board[0][col] == player and board[1][col] == player and board[2][col] == player:
             draw_horizontal_winline(col,player)
+            wonn(player)
             return True
 
     #Horizontal check
     for row in range(Board_rows):
         if board[row][0] == player and board[row][1] == player and board[row][2] == player:
             draw_vertical_winline(row,player)
+            wonn(player)
             return True
     if board[2][0] == player and board[1][1] == player and board[0][2] == player:
         draw_asc_winline(player)
+        wonn(player)
         return True
     if board[0][0] == player and board[1][1] == player and board[2][2] == player:
         draw_desc_winline(player)
+        wonn(player)
         return True
     return  False
 
@@ -170,7 +181,6 @@ def main_screen():
                         mark_boardsq(Corx,Cory,player)
                         if win_check(player):
                             game_life = True
-                            #wonn(player)
                         player = player % 2 + 1
                         draw_shapes()
             pygame.display.update()
@@ -182,11 +192,6 @@ def reset():
         for cols in range(Board_cols):
             board[row][cols] = 0
     main_screen()
-
-def wonn(player):
-
-    screen.fill((255,255,255))
-    text_to_screen(screen, 'player {0} wins '.format(player), 300, square_size, Line_color)
 
 image = pygame.image.load('src/tic.png' ).convert_alpha()
 image = pygame.transform.scale(image, (Width, Height))
@@ -201,7 +206,7 @@ def start_screen():
                 if playing == False:
                     xx = int(event.pos[0] // square_size)
                     yy = int(event.pos[1] // square_size)
-                    playing == True
+                    playing = True
                     if (yy == 1 and xx == 1) or (yy == 0 and xx == 1):
                         reset()
                     elif (yy == 2 and xx == 0):
@@ -220,6 +225,4 @@ def start_screen():
     #text_to_screen(screen, ' Press Q--> Quit ', 600, 2*square_size, Line_color)
 
 start_screen()
-
-
 
